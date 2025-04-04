@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#define NUM_ANIMAIS 3
+#define NUM_ANIMAIS 10
 
 struct Animal {
     char nome[50];
