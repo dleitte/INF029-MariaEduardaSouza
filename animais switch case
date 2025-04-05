@@ -1,0 +1,87 @@
+#include <stdio.h>
+#define NUM_ANIMAIS 10
+
+struct Animal {
+    char nome[50];
+    int idade;
+    char sexo;
+};
+
+int main() {
+    
+    struct Animal animais[NUM_ANIMAIS]; 
+    int somaIdades = 0, lista = 0, numCadastrados = 0;
+    float mediaIdade;
+
+    while (1) {
+        // Menu de opções
+        printf("\nEscolha uma opção:\n");
+        printf("0 - Sair\n");
+        printf("1 - Cadastrar animal\n");
+        printf("2 - Listar todos os animais\n");
+        printf("3 - Listar animais com idade igual ou maior que a média\n");
+        scanf("%d", &lista);
+
+        switch (lista) {
+            case 0:
+                // Sair do programa
+                printf("Saindo...\n");
+                return 0;
+
+            case 1:
+                // Cadastrar animal
+                if (numCadastrados < NUM_ANIMAIS) {
+                    printf("Digite o nome do animal %d: ", numCadastrados + 1);
+                    scanf(" %[^\n]%*c", animais[numCadastrados].nome); // Lê o nome com espaços
+                    printf("Digite a idade do animal %d: ", numCadastrados + 1);
+                    scanf("%d", &animais[numCadastrados].idade);
+                    printf("Digite o sexo do animal %d (M/F): ", numCadastrados + 1);
+                    scanf(" %c", &animais[numCadastrados].sexo);
+                    
+                    somaIdades += animais[numCadastrados].idade; // Acumula a idade para o cálculo da média
+                    numCadastrados++; // Incrementa o número de animais cadastrados
+
+                    // Calcula a média de idades
+                    mediaIdade = somaIdades / (float)numCadastrados;
+
+                    printf("Animal cadastrado com sucesso!\n");
+                } else {
+                    printf("Limite de animais atingido!\n");
+                }
+                break;
+
+            case 2:
+                // Listar todos os animais cadastrados
+                printf("\nLista de todos os animais cadastrados:\n");
+                if (numCadastrados == 0) {
+                    printf("Nenhum animal cadastrado ainda.\n");
+                } else {
+                    for (int i = 0; i < numCadastrados; i++) {
+                        printf("Nome: %s, Idade: %d, Sexo: %c\n", animais[i].nome, animais[i].idade, animais[i].sexo);
+                    }
+                }
+                break;
+
+            case 3:
+                // Listar animais com idade maior ou igual à média
+                if (numCadastrados == 0) {
+                    printf("Nenhum animal cadastrado ainda.\n");
+                    break;
+                }
+                
+                printf("\nAnimais com idade maior ou igual à média (%.2f):\n", mediaIdade);
+                for (int i = 0; i < numCadastrados; i++) {
+                    if (animais[i].idade >= mediaIdade) {
+                        printf("Nome: %s, Idade: %d, Sexo: %c\n", animais[i].nome, animais[i].idade, animais[i].sexo);
+                    }
+                }
+                break;
+
+            default:
+                printf("Opção inválida. Tente novamente.\n");
+                break;
+        }
+    }
+
+    return 0;
+}
