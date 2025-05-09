@@ -92,19 +92,54 @@ int teste(int a)
  */
 int q1(char data[])
 {
-  int datavalida = 1;
+    DataQuebrada dq = quebraData(data);
 
-  //quebrar a string data em strings sDia, sMes, sAno
+    if (dq.valido == 0)
+        return 0;
 
+    int dia = dq.iDia;
+    int mes = dq.iMes;
+    int ano = dq.iAno;
 
-  //printf("%s\n", data);
+    if (ano < 100)
+    {
+        if (ano >= 0 && ano <= 49)
+            ano += 2000;
+        else
+            ano += 1900;
+    }
 
-  if (datavalida)
-      return 1;
-  else
-      return 0;
+    if (mes < 1 || mes > 12)
+        return 0;
+
+    if (dia < 1)
+        return 0;
+
+    int diasMes;
+
+    switch (mes)
+    {
+    case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+        diasMes = 31;
+        break;
+    case 4: case 6: case 9: case 11:
+        diasMes = 30;
+        break;
+    case 2:
+        if ((ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0))
+            diasMes = 29;
+        else
+            diasMes = 28;
+        break;
+    default:
+        return 0;
+    }
+
+    if (dia > diasMes)
+        return 0;
+
+    return 1;
 }
-
 
 
 /*
@@ -123,28 +158,90 @@ int q1(char data[])
  */
 DiasMesesAnos q2(char datainicial[], char datafinal[])
 {
-
-    //calcule os dados e armazene nas três variáveis a seguir
     DiasMesesAnos dma;
+    dma.qtdDias = 0;
+    dma.qtdMeses = 0;
+    dma.qtdAnos = 0;
 
-    if (q1(datainicial) == 0){
-      dma.retorno = 2;
-      return dma;
-    }else if (q1(datafinal) == 0){
-      dma.retorno = 3;
-      return dma;
-    }else{
-      //verifique se a data final não é menor que a data inicial
-      
-      //calcule a distancia entre as datas
-
-
-      //se tudo der certo
-      dma.retorno = 1;
-      return dma;
-      
+    if (q1(datainicial) == 0)
+    {
+        dma.retorno = 2;
+        return dma;
     }
-    
+
+    if (q1(datafinal) == 0)
+    {
+        dma.retorno = 3;
+        return dma;
+    }
+
+    DataQuebrada ini = quebraData(datainicial);
+    DataQuebrada fim = quebraData(datafinal);
+
+    if (ini.iAno < 100)
+        ini.iAno += (ini.iAno <= 49) ? 2000 : 1900;
+
+    if (fim.iAno < 100)
+        fim.iAno += (fim.iAno <= 49) ? 2000 : 1900;
+
+    if (fim.iAno < ini.iAno ||
+        (fim.iAno == ini.iAno && fim.iMes < ini.iMes) ||
+        (fim.iAno == ini.iAno && fim.iMes == ini.iMes && fim.iDia < ini.iDia))
+    {
+        dma.retorno = 4;
+        return dma;
+    }
+
+    int dia1 = ini.iDia;
+    int mes1 = ini.iMes;
+    int ano1 = ini.iAno;
+    int dia2 = fim.iDia;
+    int mes2 = fim.iMes;
+    int ano2 = fim.iAno;
+
+    dma.qtdAnos = ano2 - ano1;
+    dma.qtdMeses = mes2 - mes1;
+    dma.qtdDias = dia2 - dia1;
+
+    if (dma.qtdDias < 0)
+    {
+        dma.qtdMeses--;
+        int diasNoMesAnterior;
+        int m = mes2 - 1;
+        int a = ano2;
+
+        if (m == 0)
+        {
+            m = 12;
+            a--;
+        }
+
+        switch (m)
+        {
+        case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+            diasNoMesAnterior = 31;
+            break;
+        case 4: case 6: case 9: case 11:
+            diasNoMesAnterior = 30;
+            break;
+        case 2:
+            diasNoMesAnterior = ((a % 4 == 0 && a % 100 != 0) || (a % 400 == 0)) ? 29 : 28;
+            break;
+        default:
+            diasNoMesAnterior = 30;
+        }
+
+        dma.qtdDias += diasNoMesAnterior;
+    }
+
+    if (dma.qtdMeses < 0)
+    {
+        dma.qtdAnos--;
+        dma.qtdMeses += 12;
+    }
+
+    dma.retorno = 1;
+    return dma;
 }
 
 /*
