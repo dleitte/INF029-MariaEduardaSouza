@@ -256,10 +256,28 @@ DiasMesesAnos q2(char datainicial[], char datafinal[])
  */
 int q3(char *texto, char c, int isCaseSensitive)
 {
-    int qtdOcorrencias = -1;
+    int qtdOcorrencias = 0;
+	
+    if (isCaseSensitive != 1) {
+        if (c >= 'A' && c <= 'Z')
+            c = c + 32;
+    }
+
+    for (int i = 0; texto[i] != '\0'; i++) {
+        char atual = texto[i];
+
+        if (isCaseSensitive != 1) {
+            if (atual >= 'A' && atual <= 'Z')
+                atual = atual + 32; 
+        }
+
+        if (atual == c)
+            qtdOcorrencias++;
+    }
 
     return qtdOcorrencias;
 }
+
 
 /*
  Q4 = encontrar palavra em texto
@@ -276,9 +294,21 @@ int q3(char *texto, char c, int isCaseSensitive)
         O retorno da função, n, nesse caso seria 1;
 
  */
-int q4(char *strTexto, char *strBusca, int posicoes[30])
-{
-    int qtdOcorrencias = -1;
+int q4(char *strTexto, char *strBusca, int posicoes[30]) {
+    int i, j, k;
+    int qtdOcorrencias = 0;
+    int tamTexto = strlen(strTexto);
+    int tamBusca = strlen(strBusca);
+
+    for (i = 0; i <= tamTexto - tamBusca; i++) {
+        for (j = 0, k = i; j < tamBusca && strTexto[k] == strBusca[j]; j++, k++);
+
+        if (j == tamBusca) {
+            posicoes[qtdOcorrencias * 2] = i;
+            posicoes[qtdOcorrencias * 2 + 1] = i + tamBusca - 1;
+            qtdOcorrencias++;
+        }
+    }
 
     return qtdOcorrencias;
 }
@@ -293,10 +323,15 @@ int q4(char *strTexto, char *strBusca, int posicoes[30])
     Número invertido
  */
 
-int q5(int num)
-{
+int q5(int num) {
+    int invertido = 0;
 
-    return num;
+    while (num > 0) {
+        invertido = invertido * 10 + (num % 10);
+        num /= 10;
+    }
+
+    return invertido;
 }
 
 /*
@@ -309,12 +344,30 @@ int q5(int num)
     Quantidade de vezes que número de busca ocorre em número base
  */
 
-int q6(int numerobase, int numerobusca)
-{
-    int qtdOcorrencias;
+int q6(int numerobase, int numerobusca) {
+    int qtdOcorrencias = 0;
+    char baseStr[50], buscaStr[50];
+
+    sprintf(baseStr, "%d", numerobase);
+    sprintf(buscaStr, "%d", numerobusca);
+
+    int tamBusca = strlen(buscaStr);
+    int tamBase = strlen(baseStr);
+
+    for (int i = 0; i <= tamBase - tamBusca; i++) {
+        int encontrou = 1;
+        for (int j = 0; j < tamBusca; j++) {
+            if (baseStr[i + j] != buscaStr[j]) {
+                encontrou = 0;
+                break;
+            }
+        }
+        if (encontrou)
+            qtdOcorrencias++;
+    }
+
     return qtdOcorrencias;
 }
-
 /*
  Q7 = jogo busca palavras
  @objetivo
@@ -343,15 +396,15 @@ DataQuebrada quebraData(char data[]){
 	for (i = 0; data[i] != '/'; i++){
 		sDia[i] = data[i];	
 	}
-	if(i == 1 || i == 2){ // testa se tem 1 ou dois digitos
-		sDia[i] = '\0';  // coloca o barra zero no final
+	if(i == 1 || i == 2){ 
+		sDia[i] = '\0';  
 	}else {
 		dq.valido = 0;
     return dq;
   }  
 	
 
-	int j = i + 1; //anda 1 cada para pular a barra
+	int j = i + 1; 
 	i = 0;
 
 	for (; data[j] != '/'; j++){
@@ -359,15 +412,15 @@ DataQuebrada quebraData(char data[]){
 		i++;
 	}
 
-	if(i == 1 || i == 2){ // testa se tem 1 ou dois digitos
-		sMes[i] = '\0';  // coloca o barra zero no final
+	if(i == 1 || i == 2){ 
+		sMes[i] = '\0';  
 	}else {
 		dq.valido = 0;
     return dq;
   }
 	
 
-	j = j + 1; //anda 1 cada para pular a barra
+	j = j + 1; 
 	i = 0;
 	
 	for(; data[j] != '\0'; j++){
@@ -375,8 +428,8 @@ DataQuebrada quebraData(char data[]){
 	 	i++;
 	}
 
-	if(i == 2 || i == 4){ // testa se tem 2 ou 4 digitos
-		sAno[i] = '\0';  // coloca o barra zero no final
+	if(i == 2 || i == 4){ 
+		sAno[i] = '\0';  
 	}else {
 		dq.valido = 0;
     return dq;
