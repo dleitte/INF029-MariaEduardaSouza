@@ -24,8 +24,49 @@
 #include <stdio.h>
 #include "trabalho1.h" 
 #include <stdlib.h>
+#include <string.h>
 
-DataQuebrada quebraData(char data[]);
+DataQuebrada quebraData(char data[]) {
+    DataQuebrada dq;
+    char sDia[3], sMes[3], sAno[5];
+    int i, j;
+
+    for (i = 0; data[i] != '/'; i++) {
+        sDia[i] = data[i];
+    }
+    sDia[i] = '\0'; 
+    if (i != 1 && i != 2) {
+        dq.valido = 0;
+        return dq;
+    }
+
+    j = i + 1;
+    for (i = 0; data[j] != '/'; j++, i++) {
+        sMes[i] = data[j];
+    }
+    sMes[i] = '\0';
+    if (i != 1 && i != 2) {
+        dq.valido = 0;
+        return dq; 
+    }
+
+    j = j + 1;
+    for (i = 0; data[j] != '\0'; j++, i++) {
+        sAno[i] = data[j];
+    }
+    sAno[i] = '\0'; 
+    if (i != 2 && i != 4) {
+        dq.valido = 0;
+        return dq; 
+    }
+
+    dq.iDia = atoi(sDia);
+    dq.iMes = atoi(sMes);
+    dq.iAno = atoi(sAno);
+    dq.valido = 1;
+
+    return dq;
+}
 
 /*
 ## função utilizada para testes  ##
@@ -259,20 +300,23 @@ int q3(char *texto, char c, int isCaseSensitive)
     int qtdOcorrencias = 0;
 	
     if (isCaseSensitive != 1) {
-        if (c >= 'A' && c <= 'Z')
-            c = c + 32;
+        if (c >= 'A' && c <= 'Z') {
+            c = c + 32; 
+        }
     }
 
     for (int i = 0; texto[i] != '\0'; i++) {
         char atual = texto[i];
 
         if (isCaseSensitive != 1) {
-            if (atual >= 'A' && atual <= 'Z')
-                atual = atual + 32; 
+            if (atual >= 'A' && atual <= 'Z') {
+                atual = atual + 32;
+            }
         }
 
-        if (atual == c)
+        if (atual == c) {
             qtdOcorrencias++;
+        }
     }
 
     return qtdOcorrencias;
@@ -293,19 +337,24 @@ int q3(char *texto, char c, int isCaseSensitive)
         Observe que o índice da posição no texto deve começar ser contado a partir de 1.
         O retorno da função, n, nesse caso seria 1;
 
- */
-int q4(char *strTexto, char *strBusca, int posicoes[30]) {
-    int i, j, k;
+ */int q4(char *strTexto, char *strBusca, int posicoes[30]) {
     int qtdOcorrencias = 0;
     int tamTexto = strlen(strTexto);
     int tamBusca = strlen(strBusca);
 
-    for (i = 0; i <= tamTexto - tamBusca; i++) {
-        for (j = 0, k = i; j < tamBusca && strTexto[k] == strBusca[j]; j++, k++);
+    for (int i = 0; i <= tamTexto - tamBusca; i++) {
+        int encontrou = 1;
+        for (int j = 0; j < tamBusca; j++) {
+            if (strTexto[i + j] != strBusca[j]) {
+                encontrou = 0;
+                break;
+            }
+        }
 
-        if (j == tamBusca) {
-            posicoes[qtdOcorrencias * 2] = i;
-            posicoes[qtdOcorrencias * 2 + 1] = i + tamBusca - 1;
+        if (encontrou) {
+            // Salvar as posições usando índice que começa em 1
+            posicoes[qtdOcorrencias * 2]     = i + 1;
+            posicoes[qtdOcorrencias * 2 + 1] = i + tamBusca;
             qtdOcorrencias++;
         }
     }
@@ -378,68 +427,34 @@ int q6(int numerobase, int numerobusca) {
     1 se achou 0 se não achou
  */
 
- int q7(char matriz[8][10], char palavra[5])
- {
-     int achou;
-     return achou;
- }
-
-
-
-DataQuebrada quebraData(char data[]){
-  DataQuebrada dq;
-  char sDia[3];
-	char sMes[3];
-	char sAno[5];
-	int i; 
-
-	for (i = 0; data[i] != '/'; i++){
-		sDia[i] = data[i];	
-	}
-	if(i == 1 || i == 2){ 
-		sDia[i] = '\0';  
-	}else {
-		dq.valido = 0;
-    return dq;
-  }  
-	
-
-	int j = i + 1; 
-	i = 0;
-
-	for (; data[j] != '/'; j++){
-		sMes[i] = data[j];
-		i++;
-	}
-
-	if(i == 1 || i == 2){ 
-		sMes[i] = '\0';  
-	}else {
-		dq.valido = 0;
-    return dq;
-  }
-	
-
-	j = j + 1; 
-	i = 0;
-	
-	for(; data[j] != '\0'; j++){
-	 	sAno[i] = data[j];
-	 	i++;
-	}
-
-	if(i == 2 || i == 4){ 
-		sAno[i] = '\0';  
-	}else {
-		dq.valido = 0;
-    return dq;
-  }
-
-  dq.iDia = atoi(sDia);
-  dq.iMes = atoi(sMes);
-  dq.iAno = atoi(sAno); 
-
-	dq.valido = 1;
+int q7(char matriz[8][10], char palavra[5]) {
+    int linhas = 8, colunas = 10;
+    int tamPalavra = strlen(palavra);
     
-  return dq;
+    int direcoes[8][2] = {{0, 1}, {1, 0}, {1, 1}, {1, -1}, {0, -1}, {-1, 0}, {-1, -1}, {-1, 1}};
+    
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            for (int d = 0; d < 8; d++) {
+                int dirX = direcoes[d][0], dirY = direcoes[d][1];
+                int k, x = i, y = j;
+                int encontrado = 1;
+                
+                for (k = 0; k < tamPalavra; k++) {
+                    if (x < 0 || x >= linhas || y < 0 || y >= colunas || matriz[x][y] != palavra[k]) {
+                        encontrado = 0;
+                        break;
+                    }
+                    x += dirX;
+                    y += dirY;
+                }
+                
+                if (encontrado) {
+                    return 1;  
+                }
+            }
+        }
+    }
+    
+    return 0;
 }
