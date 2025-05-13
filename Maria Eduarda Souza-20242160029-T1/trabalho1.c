@@ -25,6 +25,7 @@
 #include "trabalho1.h" 
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 DataQuebrada quebraData(char data[]) {
     DataQuebrada dq;
@@ -338,11 +339,58 @@ int q3(char *texto, char c, int isCaseSensitive)
         O retorno da função, n, nesse caso seria 1;
 
  */
-    int q4(char *strTexto, char *strBusca, int posicoes[30]){
+ void noSpecials(char *text){
+  int i, j=0;
+  #ifdef _WIN32 
+    SetConsoleOutputCP(CP_UTF8);
+  #elif __linux__ 
+	  setlocale(LC_ALL, "Portuguese");
+  #else
+  #endif
+
+  const char *comAcentos[] = {"Ä", "Å", "Á", "Â", "À", "Ã", "ä", "á", "â", "à", "ã",
+                                "É", "Ê", "Ë", "È", "é", "ê", "ë", "è",
+                                "Í", "Î", "Ï", "Ì", "í", "î", "ï", "ì",
+                                "Ö", "Ó", "Ô", "Ò", "Õ", "ö", "ó", "ô", "ò", "õ",
+                                "Ü", "Ú", "Û", "ü", "ú", "û", "ù",
+                                "Ç", "ç"};
+                                
+  const char *semAcentos[] = {"A", "A", "A", "A", "A", "A", "a", "a", "a", "a", "a",
+                              "E", "E", "E", "E", "e", "e", "e", "e",
+                              "I", "I", "I", "I", "i", "i", "i", "i",
+                              "O", "O", "O", "O", "O", "o", "o", "o", "o", "o",
+                              "U", "U", "U", "u", "u", "u", "u",
+                              "C", "c"};
+
+  char buffer[256];
+  buffer[0] = '\0';
+
+  for (int i = 0; i < strlen(text);) {
+    int found = 0;
+    // Tenta substituir cada caractere acentuado por seu equivalente
+    for (int j = 0; j < sizeof(comAcentos) / sizeof(comAcentos[0]); j++) {
+      int len = strlen(comAcentos[j]);
+
+      if (strncmp(&text[i], comAcentos[j], len) == 0) {
+        strcat(buffer, semAcentos[j]);
+        i += len;
+        found = 1;
+        break;
+      }
+    }
+    if (!found) {
+      strncat(buffer, &text[i], 1);
+      i++;
+    }
+  }
+  strcpy(text, buffer);
+}
+
+int q4(char *strTexto, char *strBusca, int posicoes[30]){
     int qtdOcorrencias = 0;
     int posicao = 0;
     int len = strlen(strBusca);
-    noSpecials(strTexto);
+    noSpecials(strTexto);//ToDo - considerar acentos ao invés de ignorá-los
     noSpecials(strBusca);
 
     for(int i = 0; i<strlen(strTexto);){
