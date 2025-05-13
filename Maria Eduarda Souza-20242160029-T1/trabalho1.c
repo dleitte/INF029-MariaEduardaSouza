@@ -360,7 +360,6 @@ int q3(char *texto, char c, int isCaseSensitive)
 
   for (int i = 0; i < strlen(text);) {
     int found = 0;
-    // Tenta substituir cada caractere acentuado por seu equivalente
     for (int j = 0; j < sizeof(comAcentos) / sizeof(comAcentos[0]); j++) {
       int len = strlen(comAcentos[j]);
 
@@ -383,7 +382,7 @@ int q4(char *strTexto, char *strBusca, int posicoes[30]){
     int qtdOcorrencias = 0;
     int posicao = 0;
     int len = strlen(strBusca);
-    noSpecials(strTexto);//ToDo - considerar acentos ao invés de ignorá-los
+    noSpecials(strTexto);
     noSpecials(strBusca);
 
     for(int i = 0; i<strlen(strTexto);){
