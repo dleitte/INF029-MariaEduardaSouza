@@ -25,7 +25,6 @@
 #include "trabalho1.h" 
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 DataQuebrada quebraData(char data[]) {
     DataQuebrada dq;
@@ -341,12 +340,6 @@ int q3(char *texto, char c, int isCaseSensitive)
  */
  void noSpecials(char *text){
   int i, j=0;
-  #ifdef _WIN32 
-    SetConsoleOutputCP(CP_UTF8);
-  #elif __linux__ 
-	  setlocale(LC_ALL, "Portuguese");
-  #else
-  #endif
 
   const char *comAcentos[] = {"Ä", "Å", "Á", "Â", "À", "Ã", "ä", "á", "â", "à", "ã",
                                 "É", "Ê", "Ë", "È", "é", "ê", "ë", "è",
