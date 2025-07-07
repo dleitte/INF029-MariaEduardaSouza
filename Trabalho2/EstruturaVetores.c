@@ -90,7 +90,7 @@ int excluirNumeroDoFinaldaEstrutura(int posicao) {
         return ESTRUTURA_AUXILIAR_VAZIA;
     }
 
-    aux->quantidade_ocupada--,
+    aux->quantidade_ocupada--;
         
     return SUCESSO;
 }
