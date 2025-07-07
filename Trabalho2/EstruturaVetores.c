@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h> 
 #include <string.h>
+#include "EstruturaVetores.h"
+
 #define TAM 10
 
 enum { TODAS_ESTRUTURAS_AUXILIARES_VAZIAS = -11, NOVO_TAMANHO_INVALIDO, NUMERO_INEXISTENTE,
@@ -264,53 +266,74 @@ int getQuantidadeElementosEstruturaAuxiliar(int posicao) {
     return aux->quantidade_ocupada;
 }
 
-/*
-Objetivo: montar a lista encadeada com cabeçote com todos os números presentes em todas as estruturas.
+No *montarListaEncadeadaComCabecote() {
+    No *cabecote = (No *) malloc(sizeof(No));
+    if (!cabecote)
+        return NULL;
 
-Retorno (No*)
-    NULL, caso não tenha nenhum número nas listas
-    No*, ponteiro para o início da lista com cabeçote
-*/
-No *montarListaEncadeadaComCabecote()
-{
+    cabecote->prox = NULL;
+    No *atual = cabecote;
+    int temElementos = 0;
 
-    return NULL;
+    for (int i = 0; i < TAM; i++) {
+        EstruturaAuxiliar *estrutura = vetorPrincipal[i];
+        if (estrutura && estrutura->quantidade_ocupada > 0) {
+            for (int j = 0; j < estrutura->quantidade_ocupada; j++) {
+                No *novo = (No *) malloc(sizeof(No));
+                if (!novo) {
+                    destruirListaEncadeadaComCabecote(&cabecote);
+                    return NULL;
+                }
+                novo->conteudo = estrutura->elementos[j];
+                novo->prox = NULL;
+                atual->prox = novo;
+                atual = novo;
+                temElementos = 1;
+            }
+        }
+    }
+
+    if (!temElementos) {
+        free(cabecote);
+        return NULL;
+    }
+
+    return cabecote;
 }
 
-/*
-Objetivo: retorna os números da lista enceada com cabeçote armazenando em vetorAux.
-Retorno void
-*/
-void getDadosListaEncadeadaComCabecote(No *inicio, int vetorAux[])
-{
+void getDadosListaEncadeadaComCabecote(No *inicio, int vetorAux[]) {
+    No *atual = inicio->prox; 
+    int i = 0;
+    while (atual != NULL) {
+        vetorAux[i++] = atual->conteudo;
+        atual = atual->prox;
+    }
 }
 
-/*
-Objetivo: Destruir a lista encadeada com cabeçote a partir de início.
-O ponteiro inicio deve ficar com NULL.
 
-Retorno 
-    void.
-*/
-void destruirListaEncadeadaComCabecote(No **inicio)
-{
+void destruirListaEncadeadaComCabecote(No **inicio) {
+    No *atual = *inicio;
+    while (atual != NULL) {
+        No *prox = atual->prox;
+        free(atual);
+        atual = prox;
+    }
+    *inicio = NULL;
 }
 
-/*
-Objetivo: inicializa o programa. deve ser chamado ao inicio do programa 
-
-*/
-
-void inicializar()
-{
+void inicializar() {
+    for (int i = 0; i < TAM; i++) {
+        vetorPrincipal[i] = NULL;
+    }
 }
 
-/*
-Objetivo: finaliza o programa. deve ser chamado ao final do programa 
-para poder liberar todos os espaços de memória das estruturas auxiliares.
-
-*/
-
-void finalizar()
-{
+void finalizar() {
+    for (int i = 0; i < TAM; i++) {
+        if (vetorPrincipal[i] != NULL) {
+            free(vetorPrincipal[i]->elementos); 
+            free(vetorPrincipal[i]);           
+            vetorPrincipal[i] = NULL;
+        }
+    }
 }
+
